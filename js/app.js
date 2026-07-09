@@ -3,6 +3,16 @@ var App = window.App || {};
 
 App.state = {
   hasOnboarded: false,
+  onboardingStep: 'choose',
+  pendingMode: 'particulier',
+  signupEmail: '',
+  signupPassword: '',
+  signupFirstName: '',
+  signupLastName: '',
+  signupBirthdate: '',
+  signupCompany: '',
+  signupAddress: '',
+  signupPhone: '',
   lang: 'fr',
   mode: 'particulier',
   view: 'feed',
@@ -51,8 +61,31 @@ function setState(patch) {
 }
 
 // ---------- Actions ----------
-App.chooseParticulier = () => setState({ hasOnboarded: true, mode: 'particulier', view: 'feed' });
-App.chooseProfessionnel = () => setState({ hasOnboarded: true, mode: 'pro', view: 'feed' });
+App.chooseParticulier = () => setState({ onboardingStep: 'signup', pendingMode: 'particulier' });
+App.chooseProfessionnel = () => setState({ onboardingStep: 'signup', pendingMode: 'pro' });
+App.backToChooseType = () => setState({ onboardingStep: 'choose' });
+
+App.onSignupEmailChange = (v) => setState({ signupEmail: v });
+App.onSignupPasswordChange = (v) => setState({ signupPassword: v });
+App.onSignupFirstNameChange = (v) => setState({ signupFirstName: v });
+App.onSignupLastNameChange = (v) => setState({ signupLastName: v });
+App.onSignupBirthdateChange = (v) => setState({ signupBirthdate: v });
+App.onSignupCompanyChange = (v) => setState({ signupCompany: v });
+App.onSignupAddressChange = (v) => setState({ signupAddress: v });
+App.onSignupPhoneChange = (v) => setState({ signupPhone: v });
+
+App.submitSignup = () => {
+  const s = App.state;
+  const base = s.signupEmail && s.signupPassword && s.signupFirstName && s.signupLastName && s.signupBirthdate;
+  const proOk = s.pendingMode !== 'pro' || (s.signupCompany && s.signupAddress && s.signupPhone);
+  if (!base || !proOk) return;
+  App.currentUser.name = s.signupFirstName + ' ' + s.signupLastName;
+  App.currentUser.handle = (s.signupFirstName + '.' + s.signupLastName).toLowerCase().replace(/\s+/g, '');
+  if (s.pendingMode === 'pro') {
+    App.data.myProBusiness.name = s.signupCompany;
+  }
+  setState({ hasOnboarded: true, mode: s.pendingMode, view: 'feed', onboardingStep: 'choose' });
+};
 
 App.goFeed = () => setState({ view: 'feed', showVehicleSettings: false });
 App.goOwner = () => setState({ view: 'owner' });
@@ -131,10 +164,9 @@ App.selectLeadModel = () => setState({ commissionModel: 'lead' });
 App.advanceLead = (id) => { const l = App.data.leadsData.find(l => l.id === id); if (l && l.status < 3) l.status += 1; render(); };
 
 // ---------- View renderers ----------
-function renderOnboarding() {
+function renderChooseType() {
   const t = T(), s = App.state;
   return `
-  <div class="onboarding-wrap">
     <div class="onboarding-box">
       <div class="onboard-logo">GARAGE·</div>
       <div class="onboard-subtitle">${esc(t.onboardSubtitle)}</div>
@@ -150,7 +182,60 @@ function renderOnboarding() {
         <div class="onboard-card-title">${esc(t.onboardCard2Title)}</div>
         <div class="onboard-card-desc">${esc(t.onboardCard2Desc)}</div>
       </div>
-    </div>
+    </div>`;
+}
+
+function renderSignupStep() {
+  const t = T(), s = App.state;
+  const isPro = s.pendingMode === 'pro';
+  const signupSubtitle = isPro ? t.signupSubtitlePro : t.signupSubtitleParticulier;
+  const canSubmit = !!(s.signupEmail && s.signupPassword && s.signupFirstName && s.signupLastName && s.signupBirthdate && (!isPro || (s.signupCompany && s.signupAddress && s.signupPhone)));
+
+  const proFields = isPro ? `
+      <label class="form-label">${esc(t.companyFieldLabel)}</label>
+      <input id="input-signup-company" class="form-input" value="${esc(s.signupCompany)}" oninput="App.onSignupCompanyChange(this.value)" placeholder="WrapStudio Lyon" />
+      <label class="form-label">${esc(t.addressFieldLabel)}</label>
+      <input id="input-signup-address" class="form-input" value="${esc(s.signupAddress)}" oninput="App.onSignupAddressChange(this.value)" placeholder="12 rue de la République, Lyon" />
+      <label class="form-label">${esc(t.phoneFieldLabel)}</label>
+      <input id="input-signup-phone" class="form-input" value="${esc(s.signupPhone)}" oninput="App.onSignupPhoneChange(this.value)" placeholder="06 12 34 56 78" />` : '';
+
+  return `
+    <div class="signup-box">
+      <span class="back-link" onclick="App.backToChooseType()">${esc(t.signupBack)}</span>
+      <div class="signup-title">${esc(t.signupTitle)}</div>
+      <div class="signup-subtitle">${esc(signupSubtitle)}</div>
+
+      <label class="form-label">${esc(t.emailFieldLabel)}</label>
+      <input id="input-signup-email" class="form-input" value="${esc(s.signupEmail)}" oninput="App.onSignupEmailChange(this.value)" placeholder="prenom.nom@email.com" />
+
+      <label class="form-label">${esc(t.passwordFieldLabel)}</label>
+      <input id="input-signup-password" type="password" class="form-input" value="${esc(s.signupPassword)}" oninput="App.onSignupPasswordChange(this.value)" placeholder="mot de passe" />
+
+      <div class="form-row">
+        <div>
+          <label class="form-label">${esc(t.firstNameFieldLabel)}</label>
+          <input id="input-signup-firstname" class="form-input" value="${esc(s.signupFirstName)}" oninput="App.onSignupFirstNameChange(this.value)" placeholder="Léo" />
+        </div>
+        <div>
+          <label class="form-label">${esc(t.lastNameFieldLabel)}</label>
+          <input id="input-signup-lastname" class="form-input" value="${esc(s.signupLastName)}" oninput="App.onSignupLastNameChange(this.value)" placeholder="Martin" />
+        </div>
+      </div>
+
+      <label class="form-label">${esc(t.birthdateFieldLabel)}</label>
+      <input id="input-signup-birthdate" type="date" class="form-input" value="${esc(s.signupBirthdate)}" oninput="App.onSignupBirthdateChange(this.value)" />
+
+      ${proFields}
+
+      <button class="btn-primary" style="width:100%; padding:13px 22px; font-size:14px; border-radius:6px; margin-top:6px;" ${canSubmit ? '' : 'disabled'} onclick="App.submitSignup()">${esc(t.signupSubmitBtn)}</button>
+    </div>`;
+}
+
+function renderOnboarding() {
+  const s = App.state;
+  return `
+  <div class="onboarding-wrap">
+    ${s.onboardingStep === 'signup' ? renderSignupStep() : renderChooseType()}
   </div>`;
 }
 

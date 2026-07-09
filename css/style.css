@@ -56,6 +56,11 @@ button { font-family: inherit; }
 .onboard-card-title { color: var(--text); font-size: 17px; font-weight: 700; margin-bottom: 6px; }
 .onboard-card-desc { color: var(--text-faint); font-size: 13px; }
 
+.signup-box { width: 440px; text-align: left; }
+.signup-title { color: #fff; font-size: 20px; font-weight: 700; margin: 14px 0 4px 0; }
+.signup-subtitle { color: #777; font-size: 13px; margin-bottom: 24px; }
+.signup-box .form-input { margin-bottom: 16px; }
+
 /* ---------- App shell ---------- */
 .app-shell { display: flex; min-height: 100vh; background: var(--bg); }
 
