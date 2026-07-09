@@ -50,10 +50,6 @@ button { font-family: inherit; }
     linear-gradient(180deg, #04070a 0%, #050810 55%, #020304 100%);
 }
 .onboard-bg { position: absolute; inset: 0; z-index: 0; pointer-events: none; }
-.onboard-car-svg {
-  position: absolute; right: -40px; bottom: 0; width: 62vw; max-width: 900px; min-width: 520px;
-  opacity: 0.92; filter: drop-shadow(0 30px 55px rgba(0, 0, 0, 0.65));
-}
 .onboard-led-strip {
   position: absolute; left: 0; right: 0; height: 2px;
   background: linear-gradient(90deg, transparent, #3fa9ff, transparent);

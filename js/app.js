@@ -231,37 +231,11 @@ function renderSignupStep() {
     </div>`;
 }
 
-const ONBOARD_CAR_SVG = `
-<svg class="onboard-car-svg" viewBox="0 0 900 320" xmlns="http://www.w3.org/2000/svg">
-  <defs>
-    <linearGradient id="carBody" x1="0%" y1="0%" x2="0%" y2="100%">
-      <stop offset="0%" stop-color="#6FB6EE"/>
-      <stop offset="45%" stop-color="#1E6FB5"/>
-      <stop offset="100%" stop-color="#0A2B47"/>
-    </linearGradient>
-    <linearGradient id="carGlass" x1="0%" y1="0%" x2="0%" y2="100%">
-      <stop offset="0%" stop-color="#12293b"/>
-      <stop offset="100%" stop-color="#04121c"/>
-    </linearGradient>
-  </defs>
-  <ellipse cx="460" cy="298" rx="400" ry="16" fill="#1E6FB5" opacity="0.35"/>
-  <path d="M40,258 C40,228 92,214 142,208 C172,172 232,138 302,123 C342,114 382,110 422,110 C472,110 522,118 562,138 C612,118 662,116 702,126 C742,136 782,158 812,193 C844,203 868,214 878,234 L878,254 C878,267 868,274 853,274 L822,274 C817,254 797,239 772,239 C747,239 727,254 722,274 L262,274 C257,254 237,239 212,239 C187,239 167,254 162,274 L72,274 C52,274 40,267 40,258 Z" fill="url(#carBody)" stroke="#082238" stroke-width="2"/>
-  <path d="M300,123 C340,114 380,110 420,110 C470,110 520,118 560,138 L540,174 L330,174 Z" fill="url(#carGlass)"/>
-  <path d="M762,148 L832,138 L834,150 L770,163 Z" fill="#0A2B47"/>
-  <path d="M822,136 L834,136 L834,164 L822,164 Z" fill="#0A2B47"/>
-  <path d="M162,218 L762,218" stroke="#3d8fd6" stroke-width="2" opacity="0.45"/>
-  <circle cx="217" cy="274" r="45" fill="#050505"/>
-  <circle cx="217" cy="274" r="23" fill="#111" stroke="#3d8fd6" stroke-width="2"/>
-  <circle cx="747" cy="274" r="48" fill="#050505"/>
-  <circle cx="747" cy="274" r="25" fill="#111" stroke="#3d8fd6" stroke-width="2"/>
-</svg>`;
-
 function renderOnboarding() {
   const s = App.state;
   return `
   <div class="onboarding-wrap">
     <div class="onboard-bg">
-      ${ONBOARD_CAR_SVG}
       <div class="onboard-led-strip strip-1"></div>
       <div class="onboard-led-strip strip-2"></div>
       <div class="onboard-vignette"></div>
