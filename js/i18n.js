@@ -1,0 +1,45 @@
+// Traductions FR / EN — GarageSocial
+var App = window.App || {};
+
+App.TR = {
+  fr: {
+    onboardSubtitle: "La communauté des passionnés et pros de l'automobile",
+    onboardCard1Title: "Je suis passionné", onboardCard1Desc: "Présente tes véhicules, échange avec la communauté, trouve des pros de confiance.",
+    onboardCard2Title: "Je suis professionnel", onboardCard2Desc: "Crée ta fiche entreprise, reçois des demandes de devis, développe ta clientèle.",
+    navFeed: "Fil d'actualité", navOwner: "Mon profil", navProDir: "Annuaire pros", navMessages: "Messages", navQuotes: "Mes demandes", navProDash: "Tableau de bord Pro", modePro: "MODE PRO", langLabel: "LANGUE",
+    searchPlaceholder: "Rechercher une plaque, une marque, une ville…", feedTitle: "Fil des passionnés", addVehicleBtn: "+ Ajouter un véhicule", resultsLabel: "RÉSULTATS", noResults: "Aucun véhicule ne correspond à cette recherche.", viewProfileBtn: "Voir la fiche",
+    backToFeed: "← Retour au fil", privacySettingsBtn: "⚙ Confidentialité", privacySettingsTitle: "Réglages de confidentialité", plateBlurLabel: "Flouter partiellement la plaque", privateProfileLabel: "Profil privé", disableSearchLabel: "Désactiver la recherche par plaque", deleteVehicleBtn: "🗑 Supprimer cette fiche et ses données", followBtn: "+ Suivre", ownVehicleBadge: "C'est ton véhicule", modsLabel: "Modifs", photosLabel: "Photos", prosLinkedLabel: "Pros liés", followersWord: "abonnés", modHistoryTitle: "Historique de modifications", galleryTitle: "Galerie",
+    createVehicleTitle: "Nouvelle fiche véhicule", addPhotosPlaceholder: "+ ajouter des photos", plateFieldLabel: "PLAQUE D'IMMATRICULATION", makeFieldLabel: "MARQUE", modelFieldLabel: "MODÈLE", yearFieldLabel: "ANNÉE", descFieldLabel: "DESCRIPTION", descPlaceholder: "Historique, préparation, ce qui rend ta voiture unique…", confidentialityTitle: "Confidentialité", rgpdText: "Je certifie être propriétaire de ce véhicule (ou autorisé par son propriétaire) et je consens à la publication volontaire de sa plaque d'immatriculation sur la plateforme. Cette donnée n'est ni vérifiée ni récupérée automatiquement — je peux la modifier ou supprimer cette fiche à tout moment.", publishBtn: "Publier la fiche véhicule",
+    myVehiclesTitle: "Ses véhicules", followersStat: "ABONNÉS", followingStat: "ABONNEMENTS",
+    proDirTitle: "Annuaire professionnels", categoryAllOpt: "Toutes catégories", cityPlaceholder: "Ville…", noProResults: "Aucun professionnel ne correspond à ces critères.",
+    backToDirectory: "← Retour à l'annuaire", requestQuoteBtn: "Demander un devis", portfolioTitle: "Portfolio", reviewsTitle: "Avis clients",
+    cancelBtn: "← Annuler", quoteFormTitle: "Demande de devis", quoteFormSubtitlePrefix: "à destination de", vehicleFieldLabel: "VÉHICULE CONCERNÉ", serviceFieldLabel: "SERVICE SOUHAITÉ", servicePlaceholder: "Ex. Covering intégral satin", detailsFieldLabel: "DÉTAILS DE LA DEMANDE", detailsPlaceholder: "Précise tes attentes, délais, budget…", sendRequestBtn: "Envoyer la demande",
+    myQuotesTitle: "Mes demandes de devis", messageBtn: "💬 Message",
+    dashboardTitlePrefix: "Tableau de bord —", dashboardSubtitle: "Gère tes demandes entrantes et ton modèle de mise en relation", newLeadsStat: "Nouvelles demandes", completedStat: "Prestations terminées", reviewsStat: "avis", relationModelTitle: "Modèle de mise en relation", relationModelSubtitle: "Configuration commerciale de la plateforme — maquette, aucun paiement réel intégré", commissionTitle: "Commission sur mise en relation", commissionDesc: "8% du montant facturé, prélevés à la prestation terminée", leadTitle: "Paiement par lead", leadDesc: "4,90 € par contact débloqué, quel que soit le résultat", incomingLeadsTitle: "Demandes entrantes",
+    messagePlaceholder: "Écrire un message…", sendBtn: "Envoyer",
+    stepLabels: ['Nouvelle demande', 'Devis envoyé', 'Accepté', 'Terminée', 'Avis laissé'],
+    statusLabelMap: ['Nouvelle demande', 'Devis envoyé', 'Accepté', 'Terminée'],
+    advanceLabels: ['Envoyer un devis', 'Marquer accepté', 'Marquer terminé'],
+  },
+  en: {
+    onboardSubtitle: "The community for car enthusiasts and automotive pros",
+    onboardCard1Title: "I'm an enthusiast", onboardCard1Desc: "Showcase your vehicles, connect with the community, find trusted pros.",
+    onboardCard2Title: "I'm a professional", onboardCard2Desc: "Create your business profile, receive quote requests, grow your client base.",
+    navFeed: "Feed", navOwner: "My profile", navProDir: "Pro directory", navMessages: "Messages", navQuotes: "My requests", navProDash: "Pro dashboard", modePro: "PRO MODE", langLabel: "LANGUAGE",
+    searchPlaceholder: "Search a plate, make, or city…", feedTitle: "Enthusiasts feed", addVehicleBtn: "+ Add a vehicle", resultsLabel: "RESULTS", noResults: "No vehicle matches this search.", viewProfileBtn: "View profile",
+    backToFeed: "← Back to feed", privacySettingsBtn: "⚙ Privacy", privacySettingsTitle: "Privacy settings", plateBlurLabel: "Partially blur the plate", privateProfileLabel: "Private profile", disableSearchLabel: "Disable plate search", deleteVehicleBtn: "🗑 Delete this profile and its data", followBtn: "+ Follow", ownVehicleBadge: "This is your vehicle", modsLabel: "Mods", photosLabel: "Photos", prosLinkedLabel: "Linked pros", followersWord: "followers", modHistoryTitle: "Modification history", galleryTitle: "Gallery",
+    createVehicleTitle: "New vehicle profile", addPhotosPlaceholder: "+ add photos", plateFieldLabel: "LICENSE PLATE", makeFieldLabel: "MAKE", modelFieldLabel: "MODEL", yearFieldLabel: "YEAR", descFieldLabel: "DESCRIPTION", descPlaceholder: "History, build, what makes your car unique…", confidentialityTitle: "Privacy", rgpdText: "I certify I own this vehicle (or am authorized by its owner) and I consent to voluntarily publishing its license plate on the platform. This data is neither verified nor automatically retrieved — I can edit or delete this profile at any time.", publishBtn: "Publish vehicle profile",
+    myVehiclesTitle: "Their vehicles", followersStat: "FOLLOWERS", followingStat: "FOLLOWING",
+    proDirTitle: "Pro directory", categoryAllOpt: "All categories", cityPlaceholder: "City…", noProResults: "No professional matches these criteria.",
+    backToDirectory: "← Back to directory", requestQuoteBtn: "Request a quote", portfolioTitle: "Portfolio", reviewsTitle: "Customer reviews",
+    cancelBtn: "← Cancel", quoteFormTitle: "Quote request", quoteFormSubtitlePrefix: "to", vehicleFieldLabel: "VEHICLE", serviceFieldLabel: "REQUESTED SERVICE", servicePlaceholder: "E.g. Full satin wrap", detailsFieldLabel: "REQUEST DETAILS", detailsPlaceholder: "Share your expectations, timeline, budget…", sendRequestBtn: "Send request",
+    myQuotesTitle: "My quote requests", messageBtn: "💬 Message",
+    dashboardTitlePrefix: "Dashboard —", dashboardSubtitle: "Manage your incoming requests and your referral model", newLeadsStat: "New requests", completedStat: "Completed jobs", reviewsStat: "reviews", relationModelTitle: "Referral model", relationModelSubtitle: "Platform business configuration — mockup, no real payment integrated", commissionTitle: "Referral commission", commissionDesc: "8% of invoiced amount, deducted once the job is completed", leadTitle: "Pay per lead", leadDesc: "€4.90 per unlocked contact, regardless of outcome", incomingLeadsTitle: "Incoming requests",
+    messagePlaceholder: "Write a message…", sendBtn: "Send",
+    stepLabels: ['New request', 'Quote sent', 'Accepted', 'Completed', 'Review left'],
+    statusLabelMap: ['New request', 'Quote sent', 'Accepted', 'Completed'],
+    advanceLabels: ['Send a quote', 'Mark accepted', 'Mark completed'],
+  },
+};
+
+window.App = App;
