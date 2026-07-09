@@ -43,8 +43,31 @@ button { font-family: inherit; }
 
 /* ---------- Onboarding ---------- */
 .onboarding-wrap {
+  position: relative; overflow: hidden;
   width: 100%; min-height: 100vh; display: flex; align-items: center; justify-content: center;
+  background:
+    radial-gradient(ellipse 900px 600px at 78% 62%, rgba(30, 111, 181, 0.28), transparent 60%),
+    linear-gradient(180deg, #04070a 0%, #050810 55%, #020304 100%);
 }
+.onboard-bg { position: absolute; inset: 0; z-index: 0; pointer-events: none; }
+.onboard-car-svg {
+  position: absolute; right: -40px; bottom: 0; width: 62vw; max-width: 900px; min-width: 520px;
+  opacity: 0.92; filter: drop-shadow(0 30px 55px rgba(0, 0, 0, 0.65));
+}
+.onboard-led-strip {
+  position: absolute; left: 0; right: 0; height: 2px;
+  background: linear-gradient(90deg, transparent, #3fa9ff, transparent);
+  box-shadow: 0 0 14px 2px rgba(63, 169, 255, 0.75);
+  animation: ledPulse 3.2s ease-in-out infinite;
+}
+.onboard-led-strip.strip-1 { bottom: 22%; }
+.onboard-led-strip.strip-2 { bottom: 10%; opacity: 0.6; animation-delay: 1.1s; }
+@keyframes ledPulse { 0%, 100% { opacity: 0.35; } 50% { opacity: 1; } }
+.onboard-vignette {
+  position: absolute; inset: 0;
+  background: radial-gradient(ellipse 700px 700px at 26% 50%, rgba(0, 0, 0, 0.8) 0%, rgba(0, 0, 0, 0.4) 45%, transparent 72%);
+}
+.onboarding-box, .signup-box { position: relative; z-index: 1; }
 .onboarding-box { width: 520px; text-align: center; }
 .onboard-logo { color: var(--text); font-size: 22px; font-weight: 700; letter-spacing: 0.02em; margin-bottom: 6px; }
 .onboard-subtitle { color: var(--text-faint2); font-size: 15px; margin-bottom: 28px; }
