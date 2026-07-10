@@ -79,6 +79,11 @@ button { font-family: inherit; }
 .signup-title { color: #fff; font-size: 20px; font-weight: 700; margin: 14px 0 4px 0; }
 .signup-subtitle { color: #777; font-size: 13px; margin-bottom: 24px; }
 .signup-box .form-input { margin-bottom: 16px; }
+.form-error { color: var(--accent); font-size: 13px; margin-bottom: 16px; }
+
+.entry-box { width: 440px; }
+.btn-block { display: block; width: 100%; padding: 15px 22px; border-radius: 6px; font-size: 15px; font-weight: 700; margin-bottom: 12px; }
+.btn-secondary-outline { background: transparent; border: 1px solid var(--border-input); color: #fff; cursor: pointer; }
 
 /* ---------- App shell ---------- */
 .app-shell { display: flex; min-height: 100vh; background: var(--bg); }
@@ -213,6 +218,35 @@ button { font-family: inherit; }
 .gallery-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
 .gallery-item { aspect-ratio: 1; border-radius: 6px; }
 
+/* ---------- Carnet d'entretien ---------- */
+.maintenance-section { padding: 20px 28px 8px 28px; }
+.maint-badge { font-size: 10.5px; font-weight: 700; padding: 4px 8px; border-radius: 4px; text-transform: uppercase; letter-spacing: 0.03em; flex-shrink: 0; }
+.maintenance-add-form { background: #0d0d0d; border: 1px solid #222; border-radius: 8px; padding: 16px; margin: 12px 0 14px 0; }
+.maintenance-add-row { display: flex; gap: 10px; margin-bottom: 10px; }
+.maintenance-add-row .form-input { margin-bottom: 0; }
+
+/* ---------- Forums ---------- */
+.forum-filter-row { display: flex; gap: 12px; margin-bottom: 12px; }
+.forum-add-link { color: var(--accent); font-size: 13px; font-weight: 600; cursor: pointer; white-space: nowrap; padding: 11px 4px; }
+.forum-add-row { display: flex; gap: 10px; margin-bottom: 20px; }
+.forum-grid-2 { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; margin-top: 20px; }
+.forum-grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-top: 20px; }
+.forum-card { background: #111; border: 1px solid #222; border-radius: 10px; padding: 20px; cursor: pointer; }
+.forum-card.centered { text-align: center; padding: 18px; }
+.forum-card-title { color: #fff; font-size: 16px; font-weight: 700; }
+.forum-card-count { color: var(--accent); font-size: 12px; font-weight: 600; margin-top: 12px; }
+.forum-card-count.muted { color: #888; font-size: 11.5px; }
+.forum-topic-row { display: flex; align-items: center; justify-content: space-between; gap: 14px; padding: 16px; background: #111; border: 1px solid #1e1e1e; border-radius: 8px; margin-bottom: 10px; cursor: pointer; }
+.forum-topic-title { color: #fff; font-size: 14px; font-weight: 700; }
+.forum-topic-meta { color: #888; font-size: 12px; margin-top: 4px; }
+.forum-topic-replies { color: #999; font-size: 12px; flex-shrink: 0; }
+.forum-post-card { background: #111; border: 1px solid #1e1e1e; border-radius: 8px; padding: 16px 18px; margin-bottom: 10px; }
+.forum-post-header { display: flex; justify-content: space-between; margin-bottom: 8px; }
+.forum-post-author { color: #fff; font-size: 13px; font-weight: 700; }
+.forum-post-time { color: #666; font-size: 12px; }
+.forum-post-text { color: #ccc; font-size: 13.5px; line-height: 1.6; }
+.forum-reply-row { display: flex; gap: 10px; margin-top: 18px; }
+
 /* ---------- Privacy settings panel ---------- */
 .settings-panel { background: #111; border: 1px solid #2a221d; border-radius: 8px; padding: 20px; margin-bottom: 20px; }
 .settings-title { color: #fff; font-size: 14px; font-weight: 700; margin-bottom: 14px; }
@@ -327,4 +361,6 @@ button { font-family: inherit; }
   .sidebar-spacer { display: none; }
   .content-inner { padding: 24px 16px 80px 16px; }
   .pro-grid { grid-template-columns: 1fr; }
+  .forum-grid-2, .forum-grid-3 { grid-template-columns: 1fr; }
+  .maintenance-add-row { flex-direction: column; }
 }

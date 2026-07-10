@@ -3,7 +3,7 @@ var App = window.App || {};
 
 App.state = {
   hasOnboarded: false,
-  onboardingStep: 'choose',
+  onboardingStep: 'entry',
   pendingMode: 'particulier',
   signupEmail: '',
   signupPassword: '',
@@ -13,6 +13,9 @@ App.state = {
   signupCompany: '',
   signupAddress: '',
   signupPhone: '',
+  loginIdentifier: '',
+  loginPassword: '',
+  loginError: false,
   lang: 'fr',
   mode: 'particulier',
   view: 'feed',
@@ -37,6 +40,25 @@ App.state = {
   formPrivate: false,
   formDisableSearch: false,
   formRgpdConsent: false,
+  selectedMakeId: 'mk1',
+  selectedModelId: 'md1',
+  selectedGenerationId: 'g1',
+  selectedTopicId: 't1',
+  makeFilter: '',
+  modelFilter: '',
+  generationFilter: '',
+  replyDraft: '',
+  showAddMake: false,
+  newMakeName: '',
+  showAddModel: false,
+  newModelName: '',
+  showAddGeneration: false,
+  newGenerationName: '',
+  showAddMaintenance: false,
+  maintType: 'revision',
+  maintTitle: '',
+  maintKm: '',
+  maintDate: '',
 };
 
 // ---------- Helpers ----------
@@ -48,6 +70,11 @@ function esc(str) {
 function T() { return App.TR[App.state.lang] || App.TR.fr; }
 function findVehicle(id) { return App.data.vehicles.find(v => v.id === id); }
 function findPro(id) { return App.data.pros.find(p => p.id === id); }
+function findAccount(identifier, password) { return App.data.accounts.find(a => (a.email === identifier || a.handle === identifier) && a.password === password); }
+function findForumMake(id) { return App.data.forumMakes.find(m => m.id === id) || App.data.forumMakes[0]; }
+function findForumModel(id) { return App.data.forumModels.find(m => m.id === id) || App.data.forumModels[0]; }
+function findForumGeneration(id) { return App.data.forumGenerations.find(g => g.id === id) || App.data.forumGenerations[0]; }
+function findForumTopic(id) { return App.data.forumTopics.find(t => t.id === id) || App.data.forumTopics[0]; }
 function formatPlate(plate, blurred) {
   if (!plate) return '';
   const p = plate.toUpperCase();
@@ -64,6 +91,19 @@ function setState(patch) {
 App.chooseParticulier = () => setState({ onboardingStep: 'signup', pendingMode: 'particulier' });
 App.chooseProfessionnel = () => setState({ onboardingStep: 'signup', pendingMode: 'pro' });
 App.backToChooseType = () => setState({ onboardingStep: 'choose' });
+App.goToSignupChoice = () => setState({ onboardingStep: 'choose' });
+App.goToLogin = () => setState({ onboardingStep: 'login', loginError: false });
+App.backToEntry = () => setState({ onboardingStep: 'entry', loginError: false });
+
+App.onLoginIdentifierChange = (v) => setState({ loginIdentifier: v, loginError: false });
+App.onLoginPasswordChange = (v) => setState({ loginPassword: v, loginError: false });
+App.submitLogin = () => {
+  const s = App.state;
+  const account = findAccount(s.loginIdentifier, s.loginPassword);
+  if (!account) { setState({ loginError: true }); return; }
+  App.currentUser.handle = account.handle;
+  setState({ hasOnboarded: true, mode: account.mode, view: 'feed', onboardingStep: 'entry', loginIdentifier: '', loginPassword: '', loginError: false });
+};
 
 App.onSignupEmailChange = (v) => setState({ signupEmail: v });
 App.onSignupPasswordChange = (v) => setState({ signupPassword: v });
@@ -84,7 +124,8 @@ App.submitSignup = () => {
   if (s.pendingMode === 'pro') {
     App.data.myProBusiness.name = s.signupCompany;
   }
-  setState({ hasOnboarded: true, mode: s.pendingMode, view: 'feed', onboardingStep: 'choose' });
+  App.data.accounts.push({ email: s.signupEmail, handle: App.currentUser.handle, password: s.signupPassword, mode: s.pendingMode });
+  setState({ hasOnboarded: true, mode: s.pendingMode, view: 'feed', onboardingStep: 'entry' });
 };
 
 App.goFeed = () => setState({ view: 'feed', showVehicleSettings: false });
@@ -163,11 +204,119 @@ App.selectCommissionModel = () => setState({ commissionModel: 'commission' });
 App.selectLeadModel = () => setState({ commissionModel: 'lead' });
 App.advanceLead = (id) => { const l = App.data.leadsData.find(l => l.id === id); if (l && l.status < 3) l.status += 1; render(); };
 
+App.goForums = () => setState({ view: 'forums' });
+App.openMake = (id) => setState({ view: 'forumModels', selectedMakeId: id, modelFilter: '' });
+App.openModel = (id) => setState({ view: 'forumGenerations', selectedModelId: id, generationFilter: '' });
+App.openGeneration = (id) => setState({ view: 'forumBoard', selectedGenerationId: id });
+App.openTopic = (id) => setState({ view: 'forumThread', selectedTopicId: id, replyDraft: '' });
+App.backToMakes = () => setState({ view: 'forums' });
+App.backToModels = () => setState({ view: 'forumModels' });
+App.backToGenerations = () => setState({ view: 'forumGenerations' });
+App.backToBoard = () => setState({ view: 'forumBoard' });
+
+App.onMakeFilterChange = (v) => setState({ makeFilter: v });
+App.toggleAddMake = () => setState({ showAddMake: !App.state.showAddMake, newMakeName: '' });
+App.onNewMakeNameChange = (v) => setState({ newMakeName: v });
+App.saveNewMake = () => {
+  const name = App.state.newMakeName.trim();
+  if (!name) return;
+  const id = 'mk' + Date.now();
+  App.data.forumMakes.push({ id, name });
+  setState({ showAddMake: false, newMakeName: '' });
+};
+
+App.onModelFilterChange = (v) => setState({ modelFilter: v });
+App.toggleAddModel = () => setState({ showAddModel: !App.state.showAddModel, newModelName: '' });
+App.onNewModelNameChange = (v) => setState({ newModelName: v });
+App.saveNewModel = () => {
+  const name = App.state.newModelName.trim();
+  if (!name) return;
+  const id = 'md' + Date.now();
+  App.data.forumModels.push({ id, makeId: App.state.selectedMakeId, name });
+  setState({ showAddModel: false, newModelName: '' });
+};
+
+App.onGenerationFilterChange = (v) => setState({ generationFilter: v });
+App.toggleAddGeneration = () => setState({ showAddGeneration: !App.state.showAddGeneration, newGenerationName: '' });
+App.onNewGenerationNameChange = (v) => setState({ newGenerationName: v });
+App.saveNewGeneration = () => {
+  const name = App.state.newGenerationName.trim();
+  if (!name) return;
+  const id = 'g' + Date.now();
+  App.data.forumGenerations.push({ id, modelId: App.state.selectedModelId, name });
+  setState({ showAddGeneration: false, newGenerationName: '' });
+};
+
+App.onReplyDraftChange = (v) => setState({ replyDraft: v });
+App.postReply = () => {
+  const draft = App.state.replyDraft.trim();
+  if (!draft) return;
+  const topic = findForumTopic(App.state.selectedTopicId);
+  if (topic) { topic.posts.push({ author: App.currentUser.handle, time: 'maintenant', text: draft }); topic.lastActivity = 'maintenant'; }
+  setState({ replyDraft: '' });
+};
+
+App.toggleAddMaintenance = () => setState({ showAddMaintenance: !App.state.showAddMaintenance, maintType: 'revision', maintTitle: '', maintKm: '', maintDate: '' });
+App.onMaintTypeChange = (v) => setState({ maintType: v });
+App.onMaintTitleChange = (v) => setState({ maintTitle: v });
+App.onMaintKmChange = (v) => setState({ maintKm: v });
+App.onMaintDateChange = (v) => setState({ maintDate: v });
+App.saveMaintenance = () => {
+  const s = App.state;
+  if (!s.maintTitle || !s.maintKm) return;
+  const v = findVehicle(s.selectedVehicleId);
+  if (v) {
+    if (!v.maintenance) v.maintenance = [];
+    v.maintenance.unshift({
+      id: 'm' + Date.now(), type: s.maintType, title: s.maintTitle, km: s.maintKm,
+      date: s.maintDate ? new Date(s.maintDate).toLocaleDateString('fr-FR') : '',
+    });
+  }
+  setState({ showAddMaintenance: false, maintTitle: '', maintKm: '', maintDate: '', maintType: 'revision' });
+};
+
 // ---------- View renderers ----------
+function renderEntryStep() {
+  const t = T(), s = App.state;
+  return `
+    <div class="onboarding-box entry-box">
+      <div class="onboard-logo">GARAGE·</div>
+      <div class="onboard-subtitle">${esc(t.onboardSubtitle)}</div>
+      <div class="lang-toggle">
+        <span class="lang-pill ${s.lang === 'fr' ? 'active' : ''}" onclick="App.setLangFr()">Français</span>
+        <span class="lang-pill ${s.lang === 'en' ? 'active' : ''}" onclick="App.setLangEn()">English</span>
+      </div>
+      <button class="btn-primary btn-block" onclick="App.goToSignupChoice()">${esc(t.entrySignupBtn)}</button>
+      <button class="btn-secondary-outline btn-block" onclick="App.goToLogin()">${esc(t.entryLoginBtn)}</button>
+    </div>`;
+}
+
+function renderLoginStep() {
+  const t = T(), s = App.state;
+  const canSubmit = !!(s.loginIdentifier && s.loginPassword);
+  return `
+    <div class="signup-box">
+      <span class="back-link" onclick="App.backToEntry()">${esc(t.signupBack)}</span>
+      <div class="signup-title">${esc(t.loginTitle)}</div>
+      <div class="signup-subtitle">${esc(t.loginSubtitle)}</div>
+
+      <label class="form-label">${esc(t.loginIdentifierLabel)}</label>
+      <input id="input-login-identifier" class="form-input" value="${esc(s.loginIdentifier)}" oninput="App.onLoginIdentifierChange(this.value)" placeholder="theo.rk@email.com" />
+
+      <label class="form-label">${esc(t.passwordFieldLabel)}</label>
+      <input id="input-login-password" type="password" class="form-input" value="${esc(s.loginPassword)}" oninput="App.onLoginPasswordChange(this.value)" placeholder="mot de passe" />
+
+      ${s.loginError ? `<div class="form-error">${esc(t.loginErrorText)}</div>` : ''}
+
+      <button class="btn-primary" style="width:100%; padding:13px 22px; font-size:14px; border-radius:6px; margin-top:6px;" ${canSubmit ? '' : 'disabled'} onclick="App.submitLogin()">${esc(t.loginSubmitBtn)}</button>
+    </div>`;
+}
+
 function renderChooseType() {
   const t = T(), s = App.state;
   return `
     <div class="onboarding-box">
+      <span class="back-link" onclick="App.backToEntry()">${esc(t.signupBack)}</span>
       <div class="onboard-logo">GARAGE·</div>
       <div class="onboard-subtitle">${esc(t.onboardSubtitle)}</div>
       <div class="lang-toggle">
@@ -240,7 +389,7 @@ function renderOnboarding() {
       <div class="onboard-led-strip strip-2"></div>
       <div class="onboard-vignette"></div>
     </div>
-    ${s.onboardingStep === 'signup' ? renderSignupStep() : renderChooseType()}
+    ${s.onboardingStep === 'entry' ? renderEntryStep() : s.onboardingStep === 'login' ? renderLoginStep() : s.onboardingStep === 'signup' ? renderSignupStep() : renderChooseType()}
   </div>`;
 }
 
@@ -257,6 +406,9 @@ function renderSidebar() {
     ${navItem('feed', '🏠', t.navFeed, 'goFeed')}
     ${navItem('owner', '🚗', t.navOwner, 'goOwner')}
     ${navItem('proDirectory', '🔧', t.navProDir, 'goProDirectory')}
+    <div class="nav-item ${s.view.indexOf('forum') === 0 ? 'active' : ''}" onclick="App.goForums()">
+      <span class="nav-icon">📚</span><span class="nav-label">${esc(t.navForums)}</span>
+    </div>
     ${navItem('messages', '💬', t.navMessages, 'goMessages')}
     ${navItem('quotes', '📋', t.navQuotes, 'goQuotes')}
     ${proDashItem}
@@ -429,6 +581,35 @@ function renderVehicleProfile() {
       <span class="mod-date">${esc(m.date)}</span>
     </div>`).join('');
 
+  const maintBadgeColors = { revision: ['#152a2a', '#4ac2c2'], reparation: ['#2a2115', '#e0a94a'] };
+  const maintenanceEntries = (v.maintenance || []).map(entry => {
+    const [bg, color] = maintBadgeColors[entry.type] || maintBadgeColors.revision;
+    const label = entry.type === 'revision' ? t.maintenanceTypeRevision : t.maintenanceTypeRepair;
+    return `
+    <div class="mod-item">
+      <div class="mod-item-left">
+        <span class="maint-badge" style="background:${bg}; color:${color};">${esc(label)}</span>
+        <div class="mod-title">${esc(entry.title)} — <span class="mod-pro">${esc(entry.km)} ${esc(t.kmWord)}</span></div>
+      </div>
+      <span class="mod-date">${esc(entry.date)}</span>
+    </div>`;
+  }).join('');
+  const maintenanceAddForm = (isOwn && s.showAddMaintenance) ? `
+    <div class="maintenance-add-form">
+      <div class="maintenance-add-row">
+        <select class="form-input" onchange="App.onMaintTypeChange(this.value)">
+          <option value="revision" ${s.maintType === 'revision' ? 'selected' : ''}>${esc(t.maintenanceTypeRevision)}</option>
+          <option value="reparation" ${s.maintType === 'reparation' ? 'selected' : ''}>${esc(t.maintenanceTypeRepair)}</option>
+        </select>
+        <input class="form-input" type="date" value="${esc(s.maintDate)}" oninput="App.onMaintDateChange(this.value)" />
+      </div>
+      <div class="maintenance-add-row">
+        <input class="form-input" value="${esc(s.maintTitle)}" oninput="App.onMaintTitleChange(this.value)" placeholder="${esc(t.maintTitleFieldLabel)}" />
+        <input class="form-input" value="${esc(s.maintKm)}" oninput="App.onMaintKmChange(this.value)" placeholder="${esc(t.maintKmFieldLabel)}" />
+      </div>
+      <button class="btn-primary" ${(s.maintTitle && s.maintKm) ? '' : 'disabled'} onclick="App.saveMaintenance()">${esc(t.saveMaintenanceBtn)}</button>
+    </div>` : '';
+
   const gallery = Array.from({ length: 8 }).map(() => `<div class="gallery-item placeholder-tile"></div>`).join('');
 
   return `
@@ -465,6 +646,14 @@ function renderVehicleProfile() {
         </div>
       </div>
       <div class="vehicle-desc">${esc(v.description)}</div>
+      <div class="maintenance-section">
+        <div style="display:flex; align-items:center; justify-content:space-between;">
+          <div class="mod-history-title">${esc(t.maintenanceTitle)}</div>
+          ${isOwn ? `<span class="forum-add-link" onclick="App.toggleAddMaintenance()">${esc(t.addMaintenanceBtn)}</span>` : ''}
+        </div>
+        ${maintenanceAddForm}
+        ${maintenanceEntries || `<div class="empty-hint">${esc(t.noMaintenance)}</div>`}
+      </div>
       <div class="mod-history">
         <div class="mod-history-title">${esc(t.modHistoryTitle)}</div>
         ${mods}
@@ -686,6 +875,144 @@ function renderMessages() {
     </div>`;
 }
 
+function renderForumsMakes() {
+  const t = T(), s = App.state;
+  const q = (s.makeFilter || '').toLowerCase().trim();
+  const makes = App.data.forumMakes
+    .filter(m => !q || m.name.toLowerCase().includes(q))
+    .map(m => ({ ...m, modelsCount: App.data.forumModels.filter(md => md.makeId === m.id).length }));
+
+  const addForm = s.showAddMake ? `
+    <div class="forum-add-row">
+      <input class="text-input" style="flex:1;" value="${esc(s.newMakeName)}" oninput="App.onNewMakeNameChange(this.value)" placeholder="${esc(t.newMakePlaceholder)}" />
+      <button class="btn-primary" onclick="App.saveNewMake()">${esc(t.createBtn)}</button>
+    </div>` : '';
+
+  const cards = makes.map(m => `
+    <div class="forum-card" onclick="App.openMake('${m.id}')">
+      <div class="forum-card-title">${esc(m.name)}</div>
+      <div class="forum-card-count">${m.modelsCount} ${esc(t.modelsWord)}</div>
+    </div>`).join('');
+
+  return `
+    <h2 class="page-title">${esc(t.forumsTitle)}</h2>
+    <div class="dashboard-subtitle">${esc(t.forumMakesSubtitle)}</div>
+    <div class="forum-filter-row">
+      <input class="text-input" style="flex:1;" value="${esc(s.makeFilter)}" oninput="App.onMakeFilterChange(this.value)" placeholder="${esc(t.filterMakePlaceholder)}" />
+      <span class="forum-add-link" onclick="App.toggleAddMake()">${esc(t.addMakeBtn)}</span>
+    </div>
+    ${addForm}
+    <div class="forum-grid-2">${cards}</div>
+    ${makes.length === 0 ? `<div class="empty-hint">${esc(t.noMakeResults)}</div>` : ''}`;
+}
+
+function renderForumsModels() {
+  const t = T(), s = App.state;
+  const make = findForumMake(s.selectedMakeId);
+  const q = (s.modelFilter || '').toLowerCase().trim();
+  const models = App.data.forumModels
+    .filter(md => md.makeId === make.id && (!q || md.name.toLowerCase().includes(q)))
+    .map(md => ({ ...md, generationsCount: App.data.forumGenerations.filter(g => g.modelId === md.id).length }));
+
+  const addForm = s.showAddModel ? `
+    <div class="forum-add-row">
+      <input class="text-input" style="flex:1;" value="${esc(s.newModelName)}" oninput="App.onNewModelNameChange(this.value)" placeholder="${esc(t.newModelPlaceholder)}" />
+      <button class="btn-primary" onclick="App.saveNewModel()">${esc(t.createBtn)}</button>
+    </div>` : '';
+
+  const cards = models.map(md => `
+    <div class="forum-card" onclick="App.openModel('${md.id}')">
+      <div class="forum-card-title">${esc(md.name)}</div>
+      <div class="forum-card-count">${md.generationsCount} ${esc(t.generationsWord)}</div>
+    </div>`).join('');
+
+  return `
+    <span class="back-link" onclick="App.backToMakes()">${esc(t.backToForums)}</span>
+    <h2 class="page-title" style="margin-top:16px;">${esc(make.name)}</h2>
+    <div class="forum-filter-row">
+      <input class="text-input" style="flex:1;" value="${esc(s.modelFilter)}" oninput="App.onModelFilterChange(this.value)" placeholder="${esc(t.filterModelPlaceholder)}" />
+      <span class="forum-add-link" onclick="App.toggleAddModel()">${esc(t.addModelBtn)}</span>
+    </div>
+    ${addForm}
+    <div class="forum-grid-2">${cards}</div>
+    ${models.length === 0 ? `<div class="empty-hint">${esc(t.noModelResults)}</div>` : ''}`;
+}
+
+function renderForumsGenerations() {
+  const t = T(), s = App.state;
+  const model = findForumModel(s.selectedModelId);
+  const make = findForumMake(model.makeId);
+  const q = (s.generationFilter || '').toLowerCase().trim();
+  const generations = App.data.forumGenerations
+    .filter(g => g.modelId === model.id && (!q || g.name.toLowerCase().includes(q)))
+    .map(g => ({ ...g, topicsCount: App.data.forumTopics.filter(top => top.generationId === g.id).length }));
+
+  const addForm = s.showAddGeneration ? `
+    <div class="forum-add-row">
+      <input class="text-input" style="flex:1;" value="${esc(s.newGenerationName)}" oninput="App.onNewGenerationNameChange(this.value)" placeholder="${esc(t.newGenerationPlaceholder)}" />
+      <button class="btn-primary" onclick="App.saveNewGeneration()">${esc(t.createBtn)}</button>
+    </div>` : '';
+
+  const cards = generations.map(g => `
+    <div class="forum-card centered" onclick="App.openGeneration('${g.id}')">
+      <div class="forum-card-title">${esc(g.name)}</div>
+      <div class="forum-card-count muted">${g.topicsCount} ${esc(t.topicsWord)}</div>
+    </div>`).join('');
+
+  return `
+    <span class="back-link" onclick="App.backToModels()">${esc(t.backToModels)}</span>
+    <h2 class="page-title" style="margin-top:16px;">${esc(make.name)} ${esc(model.name)}</h2>
+    <div class="forum-filter-row">
+      <input class="text-input" style="flex:1;" value="${esc(s.generationFilter)}" oninput="App.onGenerationFilterChange(this.value)" placeholder="${esc(t.filterGenerationPlaceholder)}" />
+      <span class="forum-add-link" onclick="App.toggleAddGeneration()">${esc(t.addGenerationBtn)}</span>
+    </div>
+    ${addForm}
+    <div class="forum-grid-3">${cards}</div>
+    ${generations.length === 0 ? `<div class="empty-hint">${esc(t.noGenerationResults)}</div>` : ''}`;
+}
+
+function renderForumBoard() {
+  const t = T(), s = App.state;
+  const generation = findForumGeneration(s.selectedGenerationId);
+  const model = findForumModel(generation.modelId);
+  const make = findForumMake(model.makeId);
+  const topics = App.data.forumTopics.filter(top => top.generationId === generation.id);
+
+  const rows = topics.map(top => `
+    <div class="forum-topic-row" onclick="App.openTopic('${top.id}')">
+      <div>
+        <div class="forum-topic-title">${esc(top.title)}</div>
+        <div class="forum-topic-meta">${esc(t.byWord)} @${esc(top.author)} · ${esc(top.lastActivity)}</div>
+      </div>
+      <span class="forum-topic-replies">${top.posts.length - 1} ${esc(t.repliesWord)}</span>
+    </div>`).join('');
+
+  return `
+    <span class="back-link" onclick="App.backToGenerations()">${esc(t.backToGenerations)}</span>
+    <h2 class="page-title" style="margin-top:16px;">${esc(make.name)} ${esc(model.name)} · ${esc(generation.name)}</h2>
+    ${rows}
+    ${topics.length === 0 ? `<div class="empty-hint">${esc(t.noTopics)}</div>` : ''}`;
+}
+
+function renderForumThread() {
+  const t = T(), s = App.state;
+  const topic = findForumTopic(s.selectedTopicId);
+  const posts = topic.posts.map(p => `
+    <div class="forum-post-card">
+      <div class="forum-post-header"><span class="forum-post-author">@${esc(p.author)}</span><span class="forum-post-time">${esc(p.time)}</span></div>
+      <div class="forum-post-text">${esc(p.text)}</div>
+    </div>`).join('');
+
+  return `
+    <span class="back-link" onclick="App.backToBoard()">${esc(t.backToBoard)}</span>
+    <h2 class="page-title" style="margin-top:16px;">${esc(topic.title)}</h2>
+    ${posts}
+    <div class="forum-reply-row">
+      <input class="chat-input" value="${esc(s.replyDraft)}" oninput="App.onReplyDraftChange(this.value)" placeholder="${esc(t.forumReplyPlaceholder)}" />
+      <button class="btn-send" onclick="App.postReply()">${esc(t.postReplyBtn)}</button>
+    </div>`;
+}
+
 function renderView() {
   const v = App.state.view;
   if (v === 'feed') return renderFeed();
@@ -694,6 +1021,11 @@ function renderView() {
   if (v === 'owner') return renderOwner();
   if (v === 'proDirectory') return renderProDirectory();
   if (v === 'proProfile') return renderProProfile();
+  if (v === 'forums') return renderForumsMakes();
+  if (v === 'forumModels') return renderForumsModels();
+  if (v === 'forumGenerations') return renderForumsGenerations();
+  if (v === 'forumBoard') return renderForumBoard();
+  if (v === 'forumThread') return renderForumThread();
   if (v === 'quoteForm') return renderQuoteForm();
   if (v === 'quotes') return renderQuotes();
   if (v === 'proDashboard') return renderProDashboard();
